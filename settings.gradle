@@ -8,3 +8,7 @@
  */
 
 rootProject.name = 'kushimitama'
+
+include 'alab-api'
+include 'alab-vue'
+

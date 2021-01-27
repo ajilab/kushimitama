@@ -1,0 +1,60 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.1'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+	id 'idea'
+}
+
+group = 'kushimitama.alab-api'
+version = '1.0.0-RELEASE'
+
+sourceCompatibility = 1.8
+
+idea {
+	module {
+		inheritOutputDirs = false
+		outputDir = file("$buildDir/classes/main/")
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+jar {
+	archiveBaseName = 'alab-api'
+	archiveVersion =  '1.0.0'
+}
+
+ext {
+	lombokVersion = "1.18.16"
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'com.ibm.db2.jcc:db2jcc:db2jcc4'
+
+    // for lombok
+    // testAnnotationProcessor、AtestCompileOnly を併記しなくていいよう configurations で設定している
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+}
+
+clean.delete fileTree("src/main/resources/static").include("**/*")
+task copyDistToStatic(type: Copy) {
+	from project(":alab-vue").file("dist")
+	into "src/main/resources/static"
+}
+copyDistToStatic.dependsOn ":alab-vue:build"
+processResources.dependsOn copyDistToStatic
+
+/*
+test {
+	useJUnitPlatform()
+}
+ */
